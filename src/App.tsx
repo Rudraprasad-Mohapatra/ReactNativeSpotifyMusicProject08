@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { setupPlayer, addTrack } from "../musicPlayerServices";
+import MusicPlayer from './Screens/MusicPlayer';
 
 function App(): React.JSX.Element {
   const [isPlayerReady, setIsPlayerReady] = useState(false);
@@ -38,17 +39,17 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <SafeAreaView>
-      <StatusBar />
-      <Text>Testing seems OK</Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <StatusBar barStyle={'light-content'} />
+      <MusicPlayer />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-
+  container:{
+    flex: 1
   }
-})
+});
 
 export default App;
