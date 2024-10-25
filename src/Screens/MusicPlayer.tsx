@@ -1,11 +1,12 @@
 import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import TrackPlayer, {
   Event,
   Track,
   useTrackPlayerEvents,
-  Capability
+  Capability,
+  useActiveTrack
 } from 'react-native-track-player'
 
 import { playListData } from '../constants';
@@ -18,6 +19,17 @@ const { width } = Dimensions.get('window');
 const MusicPlayer = () => {
   const [track, setTrack] = useState<Track | null>(null);
 
+  useEffect(() => {
+    const fetchCurrentTrack = async () => {
+      const trackk = TrackPlayer.getActiveTrack();
+      console.log("trackk is", trackk)
+      // setTrack()
+    };
+    
+    fetchCurrentTrack();
+  }, []); // This will run only once when the component mounts
+
+  
   useTrackPlayerEvents([Event.PlaybackActiveTrackChanged], async event => {
     switch (event.type) {
       case Event.PlaybackActiveTrackChanged:
@@ -32,6 +44,22 @@ const MusicPlayer = () => {
 
   const renderArtWork = () => {
     console.log("I am renderArtwork", track);
+
+    if (!track || !track.artwork) {
+      return (
+        <View style={styles.listArtWrapper}>
+          <View style={styles.albumContainer}>
+            {track?.artwork && (
+              <Image
+                style={styles.albumArtImg}
+                source={{ uri: track?.artwork?.toString() }}
+              />
+            )}
+          </View>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.listArtWrapper}>
         <View style={styles.albumContainer}>
@@ -45,16 +73,17 @@ const MusicPlayer = () => {
       </View>
     )
   }
+
   return (
     <View style={styles.container}>
       <FlatList
-      horizontal
-      data={playListData}
-      renderItem={renderArtWork}
-      keyExtractor={song => song.id.toString()}
+        horizontal
+        data={playListData}
+        renderItem={renderArtWork}
+        keyExtractor={song => song.id.toString()}
       />
 
-      <SongInfo track={track}/>
+      <SongInfo track={track} />
       <SongSlider />
       <ControlCenter />
     </View>
